@@ -1,0 +1,64 @@
+# -*- mode: sh; -*-
+if [ -z "$VIRTUAL_ENV_PROMPT" ]; then
+    source .venv/bin/activate
+fi
+
+alias reset_prompt='PS1="$OLD_PS1"'
+OLD_PS1="$PS1"
+PS1="($VIRTUAL_ENV_PROMPT) "'\[\e]0;'"tmux-macros"'\a\]\[\e[1;32m\]\u@\h\[\e[0m\]:\[\e[1;34m\]\W\[\033[00m\]\$ '
+clear
+
+
+
+alias emacs="execnohup emacs; unalias emacs; history -s execnohup emacs"
+alias rmcache='find -type d -iname __pycache__ -execdir rm -rfv \{} \; 2> /dev/null'
+
+source ~/src/.fzf-history
+source ~/src/.gitprojectrc --python
+
+## usage: _test [MOD] [ARG ...]
+function _test {
+    local mod
+    mod=.
+
+    case "$1" in
+        .*)
+            mod="${mod}$1"
+            shift
+            ;;
+        *)
+            :
+    esac
+
+    python -m $mod "$@"
+}
+
+function create-stub {
+    local modules module
+    modules=$(python ~/src/.python-module-tree.py . . || return 1)
+    module=$(fzf --height 40% --bind ctrl-r:toggle-sort,ctrl-c:clear-query <<<"$modules")
+    test -n "$module" || return 0
+    basedpyright --createstub "$module"
+}
+
+
+history -c
+HISTFILE="$VIRTUAL_ENV/.bash_history"
+HISTSIZE=500
+HISTFILESIZE=500
+export HISTFILE HISTSIZE HISTFILESIZE
+history -r
+
+## usage: list-commands
+function list-commands {
+    cat <<EOF
+Commands:
+  * _test
+  * create-stub
+  * emacs (once, modifies history)
+  * reset_prompt
+  * rmcache
+EOF
+}
+
+list-commands
