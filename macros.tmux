@@ -16,8 +16,8 @@ fi
 
 # Regenerate macro cache if not exists
 if [ ! -f "$CURRENT_DIR/macros_cache.py" ]; then
-    python3 "$CURRENT_DIR/macros.py" --update-cache
+    $CURRENT_DIR/run.sh --update-cache
 fi
 
 # Always regenerate (if updated macros.yml)
-tmux run-shell "python3 $CURRENT_DIR/macros.py --update-cache"
+tmux run-shell "$CURRENT_DIR/run.sh --update-cache"
