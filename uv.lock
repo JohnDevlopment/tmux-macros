@@ -3,6 +3,15 @@ revision = 3
 requires-python = ">=3.12"
 
 [[package]]
+name = "asttokens"
+version = "3.0.1"
+source = { registry = "http://localhost:5014/john/dev/+simple/" }
+sdist = { url = "http://localhost:5014/root/pypi/+f/71a/4ee5de0bde6a3/asttokens-3.0.1.tar.gz", hash = "sha256:71a4ee5de0bde6a31d64f6b13f2293ac190344478f081c3d1bccfcf5eacb0cb7" }
+wheels = [
+    { url = "http://localhost:5014/root/pypi/+f/15a/3ebc0f43c2d0a/asttokens-3.0.1-py3-none-any.whl", hash = "sha256:15a3ebc0f43c2d0a50eeafea25e19046c68398e487b9f1f5b517f7c0f40f976a" },
+]
+
+[[package]]
 name = "basedpyright"
 version = "1.36.1"
 source = { registry = "http://localhost:5014/john/dev/+simple/" }
@@ -12,6 +21,39 @@ dependencies = [
 sdist = { url = "http://localhost:5014/root/pypi/+f/20c/9a24e2a4c95d5/basedpyright-1.36.1.tar.gz", hash = "sha256:20c9a24e2a4c95d5b6d46c78a6b6c7e3dc7cbba227125256431d47c595b15fd4" }
 wheels = [
     { url = "http://localhost:5014/root/pypi/+f/3d7/38484fe9681cd/basedpyright-1.36.1-py3-none-any.whl", hash = "sha256:3d738484fe9681cdfe35dd98261f30a9a7aec64208bc91f8773a9aaa9b89dd16" },
+]
+
+[[package]]
+name = "colorama"
+version = "0.4.6"
+source = { registry = "http://localhost:5014/john/dev/+simple/" }
+sdist = { url = "http://localhost:5014/root/pypi/+f/086/95f5cb7ed6e05/colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44" }
+wheels = [
+    { url = "http://localhost:5014/root/pypi/+f/4f1/d9991f5acc0ca/colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6" },
+]
+
+[[package]]
+name = "executing"
+version = "2.2.1"
+source = { registry = "http://localhost:5014/john/dev/+simple/" }
+sdist = { url = "http://localhost:5014/root/pypi/+f/363/2cc370565f664/executing-2.2.1.tar.gz", hash = "sha256:3632cc370565f6648cc328b32435bd120a1e4ebb20c77e3fdde9a13cd1e533c4" }
+wheels = [
+    { url = "http://localhost:5014/root/pypi/+f/760/643d3452b4d77/executing-2.2.1-py2.py3-none-any.whl", hash = "sha256:760643d3452b4d777d295bb167ccc74c64a81df23fb5e08eff250c425a4b2017" },
+]
+
+[[package]]
+name = "icecream"
+version = "2.1.8"
+source = { registry = "http://localhost:5014/john/dev/+simple/" }
+dependencies = [
+    { name = "asttokens" },
+    { name = "colorama" },
+    { name = "executing" },
+    { name = "pygments" },
+]
+sdist = { url = "http://localhost:5014/root/pypi/+f/372/69bbc62b02f0d/icecream-2.1.8.tar.gz", hash = "sha256:37269bbc62b02f0d85bfaf3a0eb4df272c967fad059f7ddcdaee5303ea2b2a62" }
+wheels = [
+    { url = "http://localhost:5014/root/pypi/+f/10b/1c39dcb54cb28/icecream-2.1.8-py3-none-any.whl", hash = "sha256:10b1c39dcb54cb28eb487bac56c35dbf9c2b2f406d24340e1a615c3f17274852" },
 ]
 
 [[package]]
@@ -28,6 +70,15 @@ wheels = [
     { url = "http://localhost:5014/root/pypi/+f/247/3c819448fedd7/nodejs_wheel_binaries-24.12.0-py2.py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:2473c819448fedd7b036dde236b09f3c8bbf39fbbd0c1068790a0498800f498b" },
     { url = "http://localhost:5014/root/pypi/+f/209/0d59f75a68079/nodejs_wheel_binaries-24.12.0-py2.py3-none-win_amd64.whl", hash = "sha256:2090d59f75a68079fabc9b86b14df8238b9aecb9577966dc142ce2a23a32e9bb" },
     { url = "http://localhost:5014/root/pypi/+f/d0c/2273b667dd7e3/nodejs_wheel_binaries-24.12.0-py2.py3-none-win_arm64.whl", hash = "sha256:d0c2273b667dd7e3f55e369c0085957b702144b1b04bfceb7ce2411e58333757" },
+]
+
+[[package]]
+name = "pygments"
+version = "2.19.2"
+source = { registry = "http://localhost:5014/john/dev/+simple/" }
+sdist = { url = "http://localhost:5014/root/pypi/+f/636/cb2477cec7f89/pygments-2.19.2.tar.gz", hash = "sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887" }
+wheels = [
+    { url = "http://localhost:5014/root/pypi/+f/865/40386c03d588b/pygments-2.19.2-py3-none-any.whl", hash = "sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b" },
 ]
 
 [[package]]
@@ -64,6 +115,7 @@ source = { virtual = "." }
 [package.dev-dependencies]
 dev = [
     { name = "basedpyright" },
+    { name = "icecream" },
     { name = "ruff" },
 ]
 
@@ -72,5 +124,6 @@ dev = [
 [package.metadata.requires-dev]
 dev = [
     { name = "basedpyright", specifier = ">=1.36.1" },
+    { name = "icecream", specifier = ">=2.1.8" },
     { name = "ruff", specifier = ">=0.14.10" },
 ]
