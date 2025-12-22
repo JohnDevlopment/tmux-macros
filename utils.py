@@ -27,9 +27,10 @@ def load_conf():
     )
 
     config = ConfigParser()
+
     # Use fake section header to parse ini-like key=value files
     with open(conf_path) as f:
-        content = f"[default]\n" + f.read()
+        content = f"[default]\n{f.read()}"
         config.read_string(content)
 
     raw_conf = dict(config.items("default"))
