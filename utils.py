@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import subprocess
 from configparser import ConfigParser
+from string import Template
 
 import yaml
 
@@ -33,17 +34,12 @@ def load_conf():
 
     raw_conf = dict(config.items("default"))
 
-    # Add plugin_dir variable manually for substitution
-    plugin_dir = os.path.dirname(os.path.abspath(__file__))
-
-    def expand_vars(value):
-        value = value.replace("${plugin_dir}", plugin_dir)
+    def expand_vars(value: str, mapping: dict):
+        value = Template(value).safe_substitute(mapping)
         return os.path.abspath(os.path.expanduser(value))
 
     # Expand and normalize all paths
-    expanded_conf = {key: expand_vars(val) for key, val in raw_conf.items()}
-
-    return expanded_conf
+    return {key: expand_vars(val, raw_conf) for key, val in raw_conf.items()}
 
 
 def _generate_macros_cache(cache_path, macros_dict):
