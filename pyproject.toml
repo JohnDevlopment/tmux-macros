@@ -14,6 +14,7 @@ pythonVersion = "3.12"
 pythonPlatform = "Linux"
 typeCheckingMode = "standard"
 reportMissingTypeStubs = false
+reportUnusedVariable = "warning"
 
 [dependency-groups]
 dev = [
