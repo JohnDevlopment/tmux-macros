@@ -61,7 +61,7 @@ def load_cache(location: str) -> Maybe[dict[str, Any]]:
 
     return Some(macros_dict)
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("macro", nargs="?", help="Macro to execute")
     parser.add_argument(
@@ -79,11 +79,11 @@ def main():
 
         case Failure(e):
             tmux_print(f"failed to load config: {e}")
-            return
+            return 1
 
     if args.update_cache:
         parse_macros_yml_and_generate_cache(conf)
-        return
+        return 1
 
     if not os.path.exists(conf["macros_cache_py"]):
         tmux_print("⚠️ Cache not found. Regenerating...")
@@ -96,13 +96,16 @@ def main():
 
         case Nothing:  # pyright: ignore[reportUnusedVariable]  # noqa: F811, F841
             tmux_print("Error: Unable load macro cache")
-            return
+            return 1
 
     if args.macro:
         run_macro(macros_dict, args.macro)
     else:
-        tmux_print("No macro name provided.")
+        tmux_print("Error: No macro name provided.")
+        return 1
+
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    exit(main())
