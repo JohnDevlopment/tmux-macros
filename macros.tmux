@@ -6,7 +6,7 @@
 #======================================================
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-TMUX_CONF="$HOME/.config/tmux/tmux.conf"
+TMUX_CONF="$HOME/.tmux.conf"
 
 # Add sourcing line to $TMUX_CONF only if not already present
 MACROS_CONF_LINE="source-file \"$CURRENT_DIR/.tmux.macros.conf\""
