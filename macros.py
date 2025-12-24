@@ -15,7 +15,8 @@ from typing import Any
 from returns.maybe import Maybe, Nothing, Some
 from returns.result import Failure, Success
 
-from utils import load_conf, parse_macros_yml_and_generate_cache, tmux_print
+from my_typings import StrPath
+from utils import is_what, load_conf, parse_macros_yml_and_generate_cache, tmux_print
 
 
 def get_active_pane():
@@ -31,7 +32,7 @@ def send_command_to_pane(pane_id, command):
 
 
 def run_macro(macros_dict, macro_name):
-    # tmux_print(f"Running macro: {macro_name}")
+    tmux_print(f"Running macro: {macro_name}")
     active_pane = get_active_pane()
     if macro_name not in macros_dict:
         tmux_print(f"Macro '{macro_name}' not found.")
@@ -44,23 +45,16 @@ def run_macro(macros_dict, macro_name):
             sleep(0.001 * int(c["value"]))
 
 
-def load_cache(location: str) -> Maybe[dict[str, Any]]:
-    from importlib.util import module_from_spec, spec_from_file_location
+def load_cache(location: StrPath) -> Maybe[dict[str, Any]]:
+    import pickle
 
-    spec = spec_from_file_location("macros_cache", location)
-    if spec is None:
-        return Nothing
-
-    macros_cache = module_from_spec(spec)
-
-    loader = spec.loader
-    if loader is None:
-        return Nothing
-
-    loader.exec_module(macros_cache)
-    macros_dict = macros_cache.MACROS
+    with open(location, "rb") as fd:
+        macros_dict = pickle.load(fd)
+        if not is_what(macros_dict, dict, dict[str, "Any"]):
+            raise ValueError(f"pickled data is not a dict but a {type(macros_dict)}")
 
     return Some(macros_dict)
+
 
 def main() -> int:
     def _args():
@@ -105,7 +99,7 @@ def main() -> int:
 
     if not os.path.exists(conf["macros_cache_py"]):
         tmux_print("⚠️ Cache not found. Regenerating...")
-        parse_macros_yml_and_generate_cache(conf)
+        parse_macros_yml_and_generate_cache(conf) # TODO: look at and refactor this function
 
     macros_dict: dict[str, Any]
     match load_cache(conf["macros_cache_py"]):
