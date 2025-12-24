@@ -12,6 +12,7 @@ from time import sleep
 from typing import Any
 
 from returns.maybe import Maybe, Nothing, Some
+from returns.result import Failure, Success
 
 from utils import load_conf, parse_macros_yml_and_generate_cache, tmux_print
 
@@ -70,7 +71,15 @@ def main():
     )
     args = parser.parse_args()
 
-    conf = load_conf()
+    # Load config file
+    conf: dict[str, str] = {}
+    match load_conf():
+        case Success(c):
+            conf = c
+
+        case Failure(e):
+            tmux_print(f"failed to load config: {e}")
+            return
 
     if args.update_cache:
         parse_macros_yml_and_generate_cache(conf)
@@ -86,7 +95,7 @@ def main():
             macros_dict = spec
 
         case Nothing:  # pyright: ignore[reportUnusedVariable]  # noqa: F811, F841
-            tmux_print("Unable load macro cache")
+            tmux_print("Error: Unable load macro cache")
             return
 
     if args.macro:

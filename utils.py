@@ -3,9 +3,12 @@ from __future__ import annotations
 import os
 import subprocess
 from configparser import ConfigParser
+from pathlib import Path
 from string import Template
 
 import yaml
+from returns.maybe import Maybe, Nothing, Some
+from returns.result import Failure, Result, Success, safe
 
 
 def tmux_print(message):
@@ -16,22 +19,41 @@ def tmux_print(message):
     )
 
 
-def load_conf():
-    user_conf_path = os.path.expanduser("~/.tmux_macros.conf")
-    plugin_default_conf_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "tmux_macros.conf"
-    )
+def get_conf_path() -> Maybe[Path]:
+    """
+    Return the path to the config file.
 
-    conf_path = (
-        user_conf_path if os.path.exists(user_conf_path) else plugin_default_conf_path
-    )
+    The result is a `Maybe` container containing a path to an
+    existing config file.
+    """
+    fp: Path
+    for base in ["~/.tmux_macros.conf", "~/.tmux/tmux_macros.conf"]:
+        fp = Path(base).expanduser()
+        if fp.exists():
+            return Some(fp)
+
+    return Nothing
+
+
+def load_conf() -> Result[dict[str, str], str]:
+    # Default plugin config path
+    plugin_default_conf_path = Path(__file__).parent / "tmux_macros.conf"
+    if not plugin_default_conf_path.exists():
+        return Failure(f"{plugin_default_conf_path} does not exist")
+
+    # Get config path: it's either one of the paths in get_conf_path
+    # or plugin_default_conf_path
+    conf_path = get_conf_path().value_or(plugin_default_conf_path)
 
     config = ConfigParser()
 
     # Use fake section header to parse ini-like key=value files
-    with open(conf_path) as f:
-        content = f"[default]\n{f.read()}"
-        config.read_string(content)
+    try:
+        with conf_path.open() as f:
+            content = f"[default]\n{f.read()}"
+            config.read_string(content)
+    except OSError as e:
+        return Failure(f"failed to open '{conf_path}' with error: {e}")
 
     raw_conf = dict(config.items("default"))
 
@@ -40,7 +62,7 @@ def load_conf():
         return os.path.abspath(os.path.expanduser(value))
 
     # Expand and normalize all paths
-    return {key: expand_vars(val, raw_conf) for key, val in raw_conf.items()}
+    return Success({key: expand_vars(val, raw_conf) for key, val in raw_conf.items()})
 
 
 def _generate_macros_cache(cache_path, macros_dict):
