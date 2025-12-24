@@ -8,6 +8,7 @@ It reads macros from a YAML file, generates a cache, and allows execution of mac
 import argparse
 import os
 import subprocess
+from pathlib import Path
 from time import sleep
 from typing import Any
 
@@ -70,12 +71,20 @@ def main() -> int:
             action="store_true",
             help="Regenerate macros_cache.py and .tmux.macros.conf",
         )
+        parser.add_argument(
+            "--config",
+            "-c",
+            type=Path,
+            metavar="FILE",
+            help="Use FILE as the config file",
+        )
         return parser.parse_args()
     args = _args()
 
     # Load config file
+    config_file: Maybe[Path] = Maybe.from_value(args.config)
     conf: dict[str, str] = {}
-    match load_conf():
+    match load_conf(config_file):
         case Success(c):
             conf = c
 

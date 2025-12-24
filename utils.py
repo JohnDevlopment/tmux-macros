@@ -35,9 +35,13 @@ def get_conf_path() -> Maybe[Path]:
     return Nothing
 
 
-def load_conf() -> Result[dict[str, str], str]:
+def load_conf(
+    config_file: Maybe[Path]=Nothing
+) -> Result[dict[str, str], str]:
     # Default plugin config path
-    plugin_default_conf_path = Path(__file__).parent / "tmux_macros.conf"
+    plugin_default_conf_path = config_file.value_or(
+        Path(__file__).parent / "tmux_macros.conf"
+    )
     if not plugin_default_conf_path.exists():
         return Failure(f"{plugin_default_conf_path} does not exist")
 
