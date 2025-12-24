@@ -36,7 +36,8 @@ def get_conf_path() -> Maybe[Path]:
 
 
 def load_conf(
-    config_file: Maybe[Path]=Nothing
+    config_file: Maybe[Path]=Nothing,
+    plugin_dir: Maybe[Path]=Nothing
 ) -> Result[dict[str, str], str]:
     # Default plugin config path
     plugin_default_conf_path = config_file.value_or(
@@ -60,6 +61,13 @@ def load_conf(
         return Failure(f"failed to open '{conf_path}' with error: {e}")
 
     raw_conf = dict(config.items("default"))
+
+    match plugin_dir:
+        case Some(d):
+            raw_conf["plugin_dir"] = str(d)
+
+        case Nothing:  # noqa: F841
+            pass      # Do nothing
 
     def expand_vars(value: str, mapping: dict):
         value = Template(value).safe_substitute(mapping)

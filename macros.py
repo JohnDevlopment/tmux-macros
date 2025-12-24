@@ -78,13 +78,20 @@ def main() -> int:
             metavar="FILE",
             help="Use FILE as the config file",
         )
+        parser.add_argument(
+            "--plugin-dir",
+            type=Path,
+            metavar="DIR",
+            help="load plugin files from DIR",
+        )
         return parser.parse_args()
     args = _args()
 
     # Load config file
     config_file: Maybe[Path] = Maybe.from_value(args.config)
+    plugin_dir: Maybe[Path] = Maybe.from_value(args.plugin_dir)
     conf: dict[str, str] = {}
-    match load_conf(config_file):
+    match load_conf(config_file, plugin_dir):
         case Success(c):
             conf = c
 
