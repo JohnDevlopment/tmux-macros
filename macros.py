@@ -62,14 +62,16 @@ def load_cache(location: str) -> Maybe[dict[str, Any]]:
     return Some(macros_dict)
 
 def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("macro", nargs="?", help="Macro to execute")
-    parser.add_argument(
-        "--update-cache",
-        action="store_true",
-        help="Regenerate macros_cache.py and .tmux.macros.conf",
-    )
-    args = parser.parse_args()
+    def _args():
+        parser = argparse.ArgumentParser()
+        parser.add_argument("macro", nargs="?", help="Macro to execute")
+        parser.add_argument(
+            "--update-cache",
+            action="store_true",
+            help="Regenerate macros_cache.py and .tmux.macros.conf",
+        )
+        return parser.parse_args()
+    args = _args()
 
     # Load config file
     conf: dict[str, str] = {}
