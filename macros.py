@@ -9,6 +9,9 @@ import argparse
 import os
 import subprocess
 from time import sleep
+from typing import Any
+
+from returns.maybe import Maybe, Nothing, Some
 
 from utils import load_conf, parse_macros_yml_and_generate_cache, tmux_print
 
@@ -39,6 +42,24 @@ def run_macro(macros_dict, macro_name):
             sleep(0.001 * int(c["value"]))
 
 
+def load_cache(location: str) -> Maybe[dict[str, Any]]:
+    from importlib.util import module_from_spec, spec_from_file_location
+
+    spec = spec_from_file_location("macros_cache", location)
+    if spec is None:
+        return Nothing
+
+    macros_cache = module_from_spec(spec)
+
+    loader = spec.loader
+    if loader is None:
+        return Nothing
+
+    loader.exec_module(macros_cache)
+    macros_dict = macros_cache.MACROS
+
+    return Some(macros_dict)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("macro", nargs="?", help="Macro to execute")
@@ -59,12 +80,14 @@ def main():
         tmux_print("⚠️ Cache not found. Regenerating...")
         parse_macros_yml_and_generate_cache(conf)
 
-    from importlib.util import module_from_spec, spec_from_file_location
+    macros_dict: dict[str, Any]
+    match load_cache(conf["macros_cache_py"]):
+        case Some(spec):
+            macros_dict = spec
 
-    spec = spec_from_file_location("macros_cache", conf["macros_cache_py"])
-    macros_cache = module_from_spec(spec)
-    spec.loader.exec_module(macros_cache)
-    macros_dict = macros_cache.MACROS
+        case Nothing:  # pyright: ignore[reportUnusedVariable]  # noqa: F811, F841
+            tmux_print("Unable load macro cache")
+            return
 
     if args.macro:
         run_macro(macros_dict, args.macro)
