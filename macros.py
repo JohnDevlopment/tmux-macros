@@ -93,13 +93,15 @@ def main() -> int:
             tmux_print(f"failed to load config: {e}")
             return 1
 
-    if args.update_cache:
-        parse_macros_yml_and_generate_cache(conf)
-        return 1
-
-    if not os.path.exists(conf["macros_cache_py"]):
-        tmux_print("⚠️ Cache not found. Regenerating...")
+    # Update the cache if it doesn't exist or --update-cache is passed
+    not_exist = not os.path.exists(conf["macros_cache_py"])
+    if args.update_cache or not_exist:
         parse_macros_yml_and_generate_cache(conf) # TODO: look at and refactor this function
+        if not_exist:
+            tmux_print("⚠️ Cache not found. Regenerating...")
+        else:
+            # Since --update-cache was passed, this is where we stop
+            return 0
 
     macros_dict: dict[str, Any]
     match load_cache(conf["macros_cache_py"]):
