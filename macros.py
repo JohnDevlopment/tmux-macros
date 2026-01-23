@@ -19,28 +19,27 @@ from my_typings import StrPath
 from utils import is_what, load_conf, parse_macros_yml_and_generate_cache, tmux_print
 
 
-def get_active_pane():
-    return (
-        subprocess.check_output(["tmux", "display-message", "-p", "#{pane_id}"])
-        .decode("utf-8")
-        .strip()
-    )
+def get_target():
+    return subprocess.check_output(
+        ["tmux", "display-message", "-p", "#{session_id}:#{window_id}.#{pane_id}"],
+        text=True
+    ).strip()
 
 
-def send_command_to_pane(pane_id, command):
-    subprocess.run(["tmux", "send-keys", "-t", pane_id, command])
+def send_command_to_target(target, command):
+    subprocess.run(["tmux", "send-keys", "-t", target, command])
 
 
 def run_macro(macros_dict, macro_name):
     tmux_print(f"Running macro: {macro_name}")
-    active_pane = get_active_pane()
+    target = get_target()
     if macro_name not in macros_dict:
         tmux_print(f"Macro '{macro_name}' not found.")
         return
 
     for c in macros_dict[macro_name]["commands"]:
         if c["type"] == "text" or c["type"] == "keypress":
-            send_command_to_pane(active_pane, c["value"])
+            send_command_to_target(target, c["value"])
         elif c["type"] == "sleep":
             sleep(0.001 * int(c["value"]))
 
