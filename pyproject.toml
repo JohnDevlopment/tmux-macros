@@ -16,6 +16,9 @@ typeCheckingMode = "standard"
 reportMissingTypeStubs = false
 reportUnusedVariable = "warning"
 
+[tool.ruff.lint]
+extend-select = ["PLC0415", "TC003"]
+
 [dependency-groups]
 dev = [
     "basedpyright>=1.36.1",
