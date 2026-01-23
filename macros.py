@@ -78,6 +78,7 @@ def main() -> int:
             help="load plugin files from DIR",
         )
         return parser.parse_args()
+
     args = _args()
 
     # Load config file
@@ -95,7 +96,9 @@ def main() -> int:
     # Update the cache if it doesn't exist or --update-cache is passed
     not_exist = not os.path.exists(conf["macros_cache_py"])
     if args.update_cache or not_exist:
-        parse_macros_yml_and_generate_cache(conf) # TODO: look at and refactor this function
+        parse_macros_yml_and_generate_cache(
+            conf
+        )  # TODO: look at and refactor this function
         if not_exist:
             tmux_print("⚠️ Cache not found. Regenerating...")
         else:
